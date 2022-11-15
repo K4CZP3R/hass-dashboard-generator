@@ -1,0 +1,1 @@
+# hass-dashboard-generator
