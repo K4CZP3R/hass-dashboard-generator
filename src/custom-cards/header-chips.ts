@@ -52,10 +52,20 @@ export default new CustomMushroomChipsCard([
     new ChipEntity(OctoprintTimeLeft, false)
   ),
   new ChipConditional(
-    [new ChipCondition(OpelCorsaProblemActive, undefined, "Yes")],
+    [
+      new ChipCondition(OpelCorsaProblemActive, undefined, "Yes"),
+      new ChipCondition(OpelCorsa, "unknown"),
+    ],
     new ChipTemplate(OpelCorsa, OpelCorsaProblemTemplate, "mdi:car")
   ),
-  new ChipTemplate(OpelCorsa, OpelCorsaProximityLocationTemplate, "mdi:car"),
+  new ChipConditional(
+    [new ChipCondition(OpelCorsa, undefined, "unknown")],
+    new ChipTemplate(OpelCorsa, "Unknown state", "mdi:car")
+  ),
+  new ChipConditional(
+    [new ChipCondition(OpelCorsa, "unknown")],
+    new ChipTemplate(OpelCorsa, OpelCorsaProximityLocationTemplate, "mdi:car")
+  ),
   new ChipTemplate(
     TemperatureOutside,
     `Buiten: ${getStateOf(TemperatureOutside)}C`,
