@@ -1,3 +1,6 @@
+import { HassWs } from "./../helpers/hass-ws";
+import { DependencyProviderService } from "./../helpers/dependency-provider";
+import { HassApi } from "homeassistant-ws";
 export const PersonKacper = "person.kacper";
 export const PersonBarbara = "person.barbara";
 export const PersonWeronika = "person.weronika";
@@ -58,7 +61,36 @@ export const AllGlobalLamps: { [key: string]: string } = {
 
 export const DailyEnergyCosts = "sensor.daily_energy_costs";
 export const MonthlyEnergyCosts = "sensor.monthly_energy_costs";
-
 export const SpotifyKacper = "media_player.kapcslock_spotify";
-
 export const AgendaKacper = "calendar.kacper_s_agenda";
+
+export function getDynamicEntities(config: {
+  prefix?: string;
+  shouldInclude?: string;
+  suffix?: string;
+  equalsTo?: string;
+}) {
+  const hassWs = DependencyProviderService.getImpl<HassWs>("hassWs");
+  return hassWs.entities.filter((entity) => {
+    if (config.equalsTo && entity.entity_id !== config.equalsTo) {
+      return false;
+    }
+    if (config.prefix && !entity.entity_id.startsWith(config.prefix)) {
+      return false;
+    }
+    if (config.suffix && !entity.entity_id.endsWith(config.suffix)) {
+      return false;
+    }
+    if (
+      config.shouldInclude &&
+      !entity.entity_id.includes(config.shouldInclude)
+    ) {
+      return false;
+    }
+
+    return true;
+  });
+}
+
+export const DieselPrice = "sensor.tankstation_oss_diesel_stats";
+export const BenzinePrice = "sensor.tankstation_oss_benzine_stats";

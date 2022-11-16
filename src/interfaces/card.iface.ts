@@ -53,6 +53,7 @@ export interface ICustomMushroomEntityCard extends ICard {
   fill_container?: boolean;
   double_tap_action?: ITapAction;
   tap_action?: ITapAction;
+  icon?: string;
 }
 
 export function isCustomMushroomEntityCard(
@@ -205,4 +206,14 @@ export interface IButton extends ICard {
 
 export function isButton(card: ICard): card is IButton {
   return card.type === "button";
+}
+
+export interface IConditional extends ICard {
+  type: "conditional";
+  conditions: { entity: string; state: string }[];
+  card: ICard;
+}
+
+export function isConditional(card: ICard): card is IConditional {
+  return card.type === "conditional";
 }

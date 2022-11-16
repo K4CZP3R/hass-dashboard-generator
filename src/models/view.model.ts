@@ -18,7 +18,7 @@ export class View implements IView {
     optionals: {
       theme?: string;
       type?: string;
-      layout?: { card_margin?: string };
+      layout?: { card_margin?: string; margin?: string };
     } = {}
   ) {
     this.title = title;

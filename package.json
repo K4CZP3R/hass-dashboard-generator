@@ -24,6 +24,8 @@
   },
   "dependencies": {
     "clipboardy": "^3.0.0",
+    "dotenv": "^16.0.3",
+    "homeassistant-ws": "^0.2.2",
     "puppeteer": "^19.2.2",
     "yamljs": "^0.3.0"
   }
