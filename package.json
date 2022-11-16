@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "clipboardy": "^3.0.0",
+    "puppeteer": "^19.2.2",
     "yamljs": "^0.3.0"
   }
 }

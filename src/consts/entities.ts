@@ -36,6 +36,7 @@ export const TemperatureInside = "sensor.0x00124b0022ea03e0_temperature";
 export const TemperatureRadiator = "sensor.0x00124b00251ce18d_temperature";
 
 export const IntercomSwitch = "switch.door_intercom_esphome";
+export const IntercomBellActive = "binary_sensor.bell_active_intercom_esphome";
 
 export const KitchenLamp = "light.0xec1bbdfffeaad6d2";
 export const WeronikaLightStrip = "light.weronika_s_light_strip";
@@ -43,6 +44,8 @@ export const TafelLamps = "light.tafel_lampen";
 export const WoonkamerLamp = "light.0xd0cf5efffe3191be";
 export const MakeupLamp = "light.0x0c4314fffea823c1";
 export const KacperLamp = "light.lamp_yeelight";
+export const KacperLightStrip = "light.light_strip";
+export const KacperTwinkly = "light.lights_twinkly";
 
 export const AllGlobalLamps: { [key: string]: string } = {
   Keuken: KitchenLamp,
@@ -55,3 +58,7 @@ export const AllGlobalLamps: { [key: string]: string } = {
 
 export const DailyEnergyCosts = "sensor.daily_energy_costs";
 export const MonthlyEnergyCosts = "sensor.monthly_energy_costs";
+
+export const SpotifyKacper = "media_player.kapcslock_spotify";
+
+export const AgendaKacper = "calendar.kacper_s_agenda";

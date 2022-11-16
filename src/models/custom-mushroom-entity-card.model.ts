@@ -1,4 +1,4 @@
-import { Color } from "./../enums/color.enum";
+import { Color } from "../enums/color.enum";
 import { Layout } from "../enums/layout.enum";
 import { ITapAction } from "../interfaces/tap-action.iface";
 import { ICustomMushroomEntityCard } from "./../interfaces/card.iface";

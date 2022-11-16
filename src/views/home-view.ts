@@ -1,9 +1,10 @@
+import { Button } from "./../models/button.model";
 import { Map } from "./../models/map.model";
-import { getStateOf, getRawStateOf } from "./../helpers/templating";
-import { Alignment } from "./../enums/alignment.enum";
+import { getRawStateOf } from "./../helpers/templating";
+import { Alignment } from "../enums/alignment.enum";
 import {
   AllGlobalLamps,
-  DailyEnergyCosts,
+  IntercomBellActive,
   MonthlyEnergyCosts,
   OpelCorsa,
   PersonsLivingInHouse,
@@ -23,26 +24,22 @@ import { CustomMushroomEntityCard } from "../models/custom-mushroom-entity-card.
 import { Color } from "../enums/color.enum";
 import { VerticalStack } from "../models/vertical-stack.model";
 import { ITapNavigationAction } from "../interfaces/tap-action.iface";
-let myView = new View("home", "Home");
+import energyGraphCard from "../custom-cards/energy-graph-card";
+
+let myView = new View("main", "Main", false, {
+  type: "custom:masonry-layout",
+  layout: {
+    card_margin: "4px",
+  },
+});
 
 myView.addCards([
   headerChips,
   new CustomMushroomTitleCard({
-    title: "Hello {{user}}",
-    subtitle: "How is your day?",
+    title: `Hello {{user}},`,
+    subtitle: "{{now().strftime('%H:%M %d-%m-%Y')}}",
   }),
-  new CustomMushroomTemplateCard(IntercomSwitch, Layout.Horizontal, {
-    primary: "Deur",
-    icon: "mdi:door",
-    icon_color: `{% if states('switch.door_intercom_esphome') == 'on' %}green{%endif%}`,
-    tap_action: {
-      action: TapAction.Toggle,
-    },
-    double_tap_action: {
-      action: TapAction.MoreInfo,
-    },
-  }),
-  new Grid(false, 2, [
+  new Grid(false, 3, [
     ...Object.keys(AllGlobalLamps).map(
       (lamp) =>
         new CustomMushroomEntityCard(AllGlobalLamps[lamp], lamp, {
@@ -55,6 +52,35 @@ myView.addCards([
           },
         })
     ),
+  ]),
+
+  new Grid(false, 2, [
+    new CustomMushroomTemplateCard(IntercomSwitch, Layout.Vertical, {
+      primary: "Deur",
+      secondary: `{{ as_timestamp(states.${IntercomSwitch}.last_updated) | timestamp_custom("%d.%m.%Y %H:%M") }}`,
+      icon: "mdi:door",
+      fill_container: true,
+      icon_color: `{% if states('${IntercomSwitch}') == 'on' %}green{%endif%}`,
+      tap_action: {
+        action: TapAction.Toggle,
+      },
+      double_tap_action: {
+        action: TapAction.MoreInfo,
+      },
+    }),
+    new CustomMushroomTemplateCard(IntercomSwitch, Layout.Vertical, {
+      primary: "Bel",
+      secondary: `{{ as_timestamp(states.${IntercomBellActive}.last_updated) | timestamp_custom("%d.%m.%Y %H:%M") }}`,
+      icon: "mdi:bell",
+      fill_container: true,
+      icon_color: `{% if states('${IntercomBellActive}') == 'on' %}green{%else%}yellow{%endif%}`,
+      tap_action: {
+        action: TapAction.Toggle,
+      },
+      double_tap_action: {
+        action: TapAction.MoreInfo,
+      },
+    }),
   ]),
   new VerticalStack([
     new CustomMushroomTitleCard({
@@ -81,39 +107,21 @@ myView.addCards([
       subtitle: "Stroom",
     }),
     new Grid(false, 2, [
-      new CustomMushroomTemplateCard(
-        DailyEnergyCosts,
-
-        Layout.Vertical,
-        {
-          primary: `{{${getRawStateOf(MonthlyEnergyCosts)} | round() }} EUR`,
-          secondary: "Maandelijkse kosten",
-          icon: "mdi:power-socket-eu",
-          fill_container: true,
-          double_tap_action: {
-            action: TapAction.Navigate,
-            navigation_path: "energy",
-          } as ITapNavigationAction,
-          tap_action: {
-            action: TapAction.Navigate,
-            navigation_path: "energy",
-          } as ITapNavigationAction,
-        }
-      ),
-      new CustomMushroomTemplateCard(
-        DailyEnergyCosts,
-
-        Layout.Vertical,
-        {
-          primary: ` Was at {{as_timestamp(states.input_number.max_power_usage_today.last_changed)  |timestamp_custom("%H:%M") }}`,
-          secondary: `{{states("input_number.max_power_usage_today") | int }}W`,
-          icon: "mdi:power-settings",
-          fill_container: true,
-          double_tap_action: {
-            action: TapAction.MoreInfo,
-          },
-        }
-      ),
+      new CustomMushroomTemplateCard(MonthlyEnergyCosts, Layout.Vertical, {
+        primary: `{{${getRawStateOf(MonthlyEnergyCosts)} | round() }} EUR`,
+        secondary: "Maandelijkse kosten",
+        icon: "mdi:power-socket-eu",
+        fill_container: true,
+        double_tap_action: {
+          action: TapAction.Navigate,
+          navigation_path: "energy",
+        } as ITapNavigationAction,
+        tap_action: {
+          action: TapAction.Navigate,
+          navigation_path: "energy",
+        } as ITapNavigationAction,
+      }),
+      energyGraphCard,
     ]),
   ]),
   new VerticalStack([
@@ -130,6 +138,22 @@ myView.addCards([
       }
     ),
   ]),
+  // new Grid(false, 3, [
+  //   new Button(
+  //     "Debug",
+  //     {
+  //       action: TapAction.Navigate,
+  //       navigation_path: "debug",
+  //     } as ITapNavigationAction,
+  //     {
+  //       action: TapAction.None,
+  //     },
+  //     {
+  //       icon: "mdi:bug",
+  //       icon_height: "32px",
+  //     }
+  //   ),
+  // ]),
 ]);
 
 export default myView;

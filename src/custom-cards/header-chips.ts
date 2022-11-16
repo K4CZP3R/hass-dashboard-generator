@@ -22,7 +22,6 @@ import {
 } from "../consts/templates";
 
 export default new CustomMushroomChipsCard([
-  new ChipBack(),
   ...PersonsLivingInHouse.map((person) => new ChipEntity(person, true)),
   ...PersonsNotLivingInHouse.map(
     (person) =>

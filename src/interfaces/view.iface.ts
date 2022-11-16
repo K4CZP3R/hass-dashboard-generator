@@ -6,4 +6,9 @@ export interface IView {
   badges: unknown[];
   path: string;
   cards: ICard[];
+  subview: boolean;
+  type?: string;
+  layout?: {
+    card_margin?: string;
+  };
 }
