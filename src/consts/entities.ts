@@ -49,6 +49,7 @@ export const MakeupLamp = "light.0x0c4314fffea823c1";
 export const KacperLamp = "light.lamp_yeelight";
 export const KacperLightStrip = "light.light_strip";
 export const KacperTwinkly = "light.lights_twinkly";
+export const LightsOutside = "switch.smart_plug_2_tuya";
 
 export const AllGlobalLamps: { [key: string]: string } = {
   Keuken: KitchenLamp,
@@ -57,6 +58,7 @@ export const AllGlobalLamps: { [key: string]: string } = {
   Woonkamer: WoonkamerLamp,
   Makeup: MakeupLamp,
   "Kacper's Lamp": KacperLamp,
+  "Lichtjes buiten": LightsOutside,
 };
 
 export const DailyEnergyCosts = "sensor.daily_energy_costs";
@@ -94,3 +96,5 @@ export function getDynamicEntities(config: {
 
 export const DieselPrice = "sensor.tankstation_oss_diesel_stats";
 export const BenzinePrice = "sensor.tankstation_oss_benzine_stats";
+
+export const DieselPrices = { "De Kock (zelfservice)": "sensor.dfp_diesel_b7_oss_de_kock_self_service", "Shell Ruwaard": "sensor.dfp_diesel_b7_oss_de_ruwaard", "Tango": "sensor.dfp_diesel_b7_oss_dr_saal_v_zwanenbergsingel" }

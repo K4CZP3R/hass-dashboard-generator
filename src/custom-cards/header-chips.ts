@@ -70,4 +70,9 @@ export default new CustomMushroomChipsCard([
     `Buiten: ${getStateOf(TemperatureOutside)}C`,
     "mdi:thermometer"
   ),
+  new ChipTemplate(
+    "sensor.power_consumed",
+    `Power: {{states('sensor.power_consumed') | int}}W`,
+    "mdi:flash"
+  )
 ]);

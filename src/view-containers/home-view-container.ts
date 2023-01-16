@@ -1,9 +1,9 @@
-import { BenzinePrice, DieselPrice } from "./../consts/entities";
+import { BenzinePrice, DieselPrice, DieselPrices } from "./../consts/entities";
 import { IView } from "../interfaces/view.iface";
 import { IViewContainer } from "../interfaces/view-container.iface";
 import { Button } from "../models/button.model";
 import { Map } from "../models/map.model";
-import { getRawStateOf } from "../helpers/templating";
+import { getAttributeOf, getRawStateOf } from "../helpers/templating";
 import { Alignment } from "../enums/alignment.enum";
 import {
   AllGlobalLamps,
@@ -28,6 +28,7 @@ import { Color } from "../enums/color.enum";
 import { VerticalStack } from "../models/vertical-stack.model";
 import { ITapNavigationAction } from "../interfaces/tap-action.iface";
 import energyGraphCard from "../custom-cards/energy-graph-card";
+import temperatureGraphCard from "../custom-cards/temperature-graph-card";
 export class MainViewContainer implements IViewContainer {
   view: View;
   constructor() {
@@ -46,7 +47,7 @@ export class MainViewContainer implements IViewContainer {
         title: `Hello {{user}},`,
         subtitle: "{{now().strftime('%H:%M %d-%m-%Y')}}",
       }),
-      new Grid(false, 3, [
+      new Grid(false,3, [
         ...Object.keys(AllGlobalLamps).map(
           (lamp) =>
             new CustomMushroomEntityCard(AllGlobalLamps[lamp], lamp, {
@@ -60,41 +61,46 @@ export class MainViewContainer implements IViewContainer {
             })
         ),
       ]),
-
-      new Grid(false, 2, [
-        new CustomMushroomTemplateCard(IntercomSwitch, Layout.Vertical, {
-          primary: "Deur",
-          secondary: `{{ as_timestamp(states.${IntercomSwitch}.last_updated) | timestamp_custom("%d.%m.%Y %H:%M") }}`,
-          icon: "mdi:door",
-          fill_container: true,
-          icon_color: `{% if states('${IntercomSwitch}') == 'on' %}green{%endif%}`,
-          tap_action: {
-            action: TapAction.Toggle,
-          },
-          double_tap_action: {
-            action: TapAction.MoreInfo,
-          },
+      new VerticalStack([
+        new CustomMushroomTitleCard({
+          subtitle: "Intercom",
+          alignment: Alignment.Left,
         }),
-        new CustomMushroomTemplateCard(IntercomSwitch, Layout.Vertical, {
-          primary: "Bel",
-          secondary: `{{ as_timestamp(states.${IntercomBellActive}.last_updated) | timestamp_custom("%d.%m.%Y %H:%M") }}`,
-          icon: "mdi:bell",
-          fill_container: true,
-          icon_color: `{% if states('${IntercomBellActive}') == 'on' %}green{%else%}yellow{%endif%}`,
-          tap_action: {
-            action: TapAction.Toggle,
-          },
-          double_tap_action: {
-            action: TapAction.MoreInfo,
-          },
-        }),
+        new Grid(false, 2, [
+          new CustomMushroomTemplateCard(IntercomSwitch, Layout.Vertical, {
+            primary: "Deur",
+            secondary: `{{ as_timestamp(states.${IntercomSwitch}.last_updated) | timestamp_custom("%d.%m.%Y %H:%M") }}`,
+            icon: "mdi:door",
+            fill_container: true,
+            icon_color: `{% if states('${IntercomSwitch}') == 'on' %}green{%endif%}`,
+            tap_action: {
+              action: TapAction.Toggle,
+            },
+            double_tap_action: {
+              action: TapAction.MoreInfo,
+            },
+          }),
+          new CustomMushroomTemplateCard(IntercomSwitch, Layout.Vertical, {
+            primary: "Bel",
+            secondary: `{{ as_timestamp(states.${IntercomBellActive}.last_updated) | timestamp_custom("%d.%m.%Y %H:%M") }}`,
+            icon: "mdi:bell",
+            fill_container: true,
+            icon_color: `{% if states('${IntercomBellActive}') == 'on' %}green{%else%}yellow{%endif%}`,
+            tap_action: {
+              action: TapAction.Toggle,
+            },
+            double_tap_action: {
+              action: TapAction.MoreInfo,
+            },
+          }),
+        ]),
       ]),
       new VerticalStack([
         new CustomMushroomTitleCard({
           subtitle: "Temperaturen",
           alignment: Alignment.Left,
         }),
-        new Grid(false, 3, [
+        new Grid(false, 2, [
           new CustomMushroomEntityCard(TemperatureInside, "Binnen", {
             layout: Layout.Vertical,
             icon_color: Color.Yellow,
@@ -102,55 +108,11 @@ export class MainViewContainer implements IViewContainer {
           new CustomMushroomEntityCard(TemperatureOutside, "Buiten", {
             layout: Layout.Vertical,
             icon_color: Color.Cyan,
-          }),
-          new CustomMushroomEntityCard(TemperatureRadiator, "Radiator", {
-            layout: Layout.Vertical,
-            icon_color: Color.Red,
-            double_tap_action: {
-              action: TapAction.Navigate,
-              navigation_path: "debug",
-            } as ITapNavigationAction,
-          }),
+          })
         ]),
       ]),
       new VerticalStack([
-        new CustomMushroomTitleCard({
-          subtitle: "Stroom",
-        }),
-        new Grid(false, 2, [
-          new CustomMushroomTemplateCard(MonthlyEnergyCosts, Layout.Vertical, {
-            primary: `{{${getRawStateOf(MonthlyEnergyCosts)} | round() }} EUR`,
-            secondary: "Maandelijkse kosten",
-            icon: "mdi:power-socket-eu",
-            fill_container: true,
-            double_tap_action: {
-              action: TapAction.Navigate,
-              navigation_path: "energy",
-            } as ITapNavigationAction,
-            tap_action: {
-              action: TapAction.Navigate,
-              navigation_path: "energy",
-            } as ITapNavigationAction,
-          }),
-          energyGraphCard,
-        ]),
-      ]),
-      // new VerticalStack([
-      //   new CustomMushroomTitleCard({
-      //     subtitle: "Locaties",
-      //   }),
-      //   new Map(
-      //     [...PersonsLivingInHouse, OpelCorsa].map((e) => {
-      //       return { entity: e };
-      //     }),
-      //     {
-      //       aspect_ratio: "1:1",
-      //       hours_to_show: 24,
-      //     }
-      //   ),
-      // ]),
-      new VerticalStack([
-        new CustomMushroomTitleCard({ subtitle: "Brandstof" }),
+        new CustomMushroomTitleCard({ subtitle: "Auto", alignment: Alignment.Left }),
         new Grid(false, 2, [
           new CustomMushroomEntityCard(DieselPrice, "Diesel", {
             icon: "mdi:gas-station",
@@ -161,7 +123,45 @@ export class MainViewContainer implements IViewContainer {
             icon_color: Color.Green,
           }),
         ]),
+        new Grid(false, 2, [
+          new CustomMushroomTemplateCard(OpelCorsa, Layout.Horizontal, {
+            primary: "Car Battery",
+            secondary: `${getAttributeOf(OpelCorsa, "batteryVoltage")}V`,
+            icon: "mdi:battery",
+            icon_color: Color.Green,
+            
+          }),
+          new CustomMushroomTemplateCard(OpelCorsa, Layout.Horizontal, {
+            primary: "Mileage",
+            secondary: `${getAttributeOf(OpelCorsa, "mileage")}km`,
+            icon: "mdi:car",
+            icon_color: Color.Green,
+          }),
+        ])
+        // new Grid(false, 3, Object.keys(DieselPrices).map((name) => {
+        //   return new CustomMushroomEntityCard(DieselPrices[name], name, {
+        //     icon: "mdi:gas-station",
+        //     icon_color: Color.Red,
+        //   })
+        // }))
       ]),
+      new VerticalStack([
+        new CustomMushroomTitleCard({
+          subtitle: "Locaties",
+          alignment: Alignment.Left,
+        }),
+        new Map(
+          [...PersonsLivingInHouse, OpelCorsa].map((e) => {
+            return { entity: e };
+          }),
+          {
+            aspect_ratio: "2:1",
+            hours_to_show: 24,
+          }
+        ),
+      ]),
+
+
     ]);
 
     return this.view;
